@@ -9,13 +9,16 @@ import cv2
 import os
 
 class ImageClassifierPub(Node):
-
+    """
+    Create a ImageClassifierPub class, which is a subclass of the Node class.
+    """
     def __init__(self):
 
         self.occupied = False
         self.img = None
         self.cv_bridge = CvBridge()
-
+        
+        # Initiate the Node class's constructor and give it a name
         super().__init__('image_classifier_pub')
         self.init_parameters()
         self.ei_classifier = self.EI_Classifier(self.modelfile, self.get_logger())
