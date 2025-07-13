@@ -1,8 +1,8 @@
-import rclpy # Python Client Library for ROS 2
-from rclpy.node import Node # Handles the creation of nodes
-from sensor_msgs.msg import Image # Image is the message type
-from cv_bridge import CvBridge # Package to convert between ROS and OpenCV Images
-import cv2 # OpenCV library
+import rclpy
+from rclpy.node import Node
+from sensor_msgs.msg import Image
+from cv_bridge import CvBridge
+import cv2
 
 class CameraStreamPub(Node):
     """
@@ -10,26 +10,26 @@ class CameraStreamPub(Node):
     """
     def __init__(self):
         """
-        Class constructor to set up the node
+        Class constructor to set up the node.
         """
-        # Initiate the Node class's constructor and give it a name
+        # Initiate the Node class's constructor and give it a name.
         super().__init__('camera_stream_pub')
         
         # Create the publisher. This publisher will publish an Image
         # to the video_frame_data topic. The queue size is 10 messages.
         self.publisher_ = self.create_publisher(Image, 'video_frame_data', 10)
         
-        # We will publish a message every 0.1 seconds
+        # We will publish a message every 0.1 seconds.
         timer_period = 0.1  # seconds
         
-        # Create the timer
+        # Create the timer.
         self.timer = self.create_timer(timer_period, self.timer_callback)
             
-        # Create a VideoCapture object
+        # Create a VideoCapture object.
         # The argument '0' gets the default webcam.
         self.cap = cv2.VideoCapture(0)
             
-        # Used to convert between ROS and OpenCV images
+        # Used to convert between ROS and OpenCV images.
         self.br = CvBridge()
         
     def timer_callback(self):
@@ -37,7 +37,7 @@ class CameraStreamPub(Node):
         Callback function.
         This function gets called every 0.1 seconds.
         """
-        # Capture frame-by-frame
+        # Capture frame-by-frame.
         # This method returns True/False as well
         # as the video frame.
         ret, frame = self.cap.read()
@@ -45,26 +45,26 @@ class CameraStreamPub(Node):
         if ret == True:
             # Publish the image.
             # The 'cv2_to_imgmsg' method converts an OpenCV
-            # image to a ROS 2 image message
+            # image to a ROS 2 image message.
             self.publisher_.publish(self.br.cv2_to_imgmsg(frame))
     
 def main(args=None):
-    
-    # Initialize the rclpy library
+    """
+    Main function to initialize the node and start the camera stream publisher.
+    """
+    # Initialize the rclpy library.
     rclpy.init(args=args)
     
-    # Create the node
+    # Create the node.
     camera_stream_publisher_node = CameraStreamPub()
     
     # Spin the node so the callback function is called.
     rclpy.spin(camera_stream_publisher_node)
     
-    # Destroy the node explicitly
-    # (optional - otherwise it will be done automatically
-    # when the garbage collector destroys the node object)
+    # Destroy the node explicitly.
     camera_stream_publisher_node.destroy_node()
     
-    # Shutdown the ROS client library for Python
+    # Shutdown the ROS client library for Python.
     rclpy.shutdown()
 
 if __name__ == '__main__':

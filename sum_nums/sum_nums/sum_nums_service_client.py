@@ -4,8 +4,14 @@ from rclpy.node import Node
 
 
 class SumNumsClient(Node):
+    """
+    Node to send requests to compute the sum of first n integer numbers.
+    """
 
     def __init__(self):
+        """
+        Initializes the SumNumsClient class.
+        """
         super().__init__('sum_nums_client_node')
         self.cli = self.create_client(SumNumsSrv, 'sum_n_nums')
         while not self.cli.wait_for_service(timeout_sec=1.0):
@@ -13,6 +19,15 @@ class SumNumsClient(Node):
         self.req = SumNumsSrv.Request()
 
     def send_request(self, n):
+        """
+        Sends a request to compute the sum of first n integer numbers.
+
+        Parameters:
+            n: The number of integer numbers to sum.
+
+        Returns:
+            The response containing the computed sum.
+        """
         self.req.n = n
         self.future = self.cli.call_async(self.req)
         rclpy.spin_until_future_complete(self, self.future)
@@ -20,6 +35,9 @@ class SumNumsClient(Node):
 
 
 def main(args=None):
+    """
+    Main function to initialize the node and send a request to compute the sum of first n integer numbers.
+    """
     rclpy.init(args=args)
 
     sum_nums_client_node = SumNumsClient()
@@ -33,8 +51,6 @@ def main(args=None):
         print("Sum of first", num_input, "integer numbers is:", response.sum)
 
     # Destroy the node explicitly
-    # (optional - otherwise it will be done automatically
-    # when the garbage collector destroys the node object)
     sum_nums_client_node.destroy_node()
     rclpy.shutdown()
 
